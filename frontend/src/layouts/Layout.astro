@@ -1,0 +1,7 @@
+---
+import '../styles/global.css';
+interface Props { title:string }
+const {title}=Astro.props;
+---
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="life-setup-app" content="life-setup-agent"/><meta name="description" content="One simple plan for starting your life in Abu Dhabi."/><title>{title} · Life Setup</title></head>
+<body><header class="site-header"><a class="brand" href="/" aria-label="Life Setup home"><span class="brand-mark">L</span> Life Setup<span class="brand-location">Abu Dhabi</span></a><span class="prototype-label">Hackathon prototype</span></header><main><slot/></main><footer class="site-footer"><span>One simple plan for starting your life in Abu Dhabi.</span><span>Official services confirm requirements. Your progress is self-reported.</span></footer></body></html>

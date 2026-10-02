@@ -1,0 +1,5 @@
+---
+import Layout from '../layouts/Layout.astro';
+import WelcomeActions from '../features/WelcomeActions';
+---
+<Layout title="Welcome"><section class="welcome"><div class="eyebrow"><span class="small-dot"></span> A new city. A clear next step.</div><h1>Set up your life<br/>in <span>Abu Dhabi.</span></h1><p class="welcome-copy">Tell us a little about your move.<br/>We’ll show you what to do, in the right order.</p><WelcomeActions client:load/><div class="welcome-proof"><span>Personal to your move</span><span>One step at a time</span><span>Links to official services</span></div></section><section class="welcome-bottom"><p>A little less admin.<br/><strong>A little more feeling at home.</strong></p><div class="preview-stack" aria-hidden="true"><div><span class="preview-number">01</span><span>Get your Emirates ID</span><span class="preview-pill">In progress</span></div><div><span class="preview-number">02</span><span>Open a bank account</span><span class="preview-muted">Coming next</span></div><div><span class="preview-number">03</span><span>Check your driving options</span><span class="preview-muted">Coming next</span></div></div></section></Layout>
