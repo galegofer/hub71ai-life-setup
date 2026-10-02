@@ -15,7 +15,7 @@ async function demo(page){await page.goto(origin);await hydrated(page);await pag
 async function ask(page){await page.getByRole('button',{name:'Ask Life Setup',exact:true}).click();await page.getByRole('button',{name:'Can I exchange my driving licence now?',exact:true}).click();await page.getByRole('button',{name:'Ask',exact:true}).click();await visible(page.locator('.answer'));return page.locator('.answer').innerText();}
 async function close(page){await page.getByRole('button',{name:'Close panel',exact:true}).click();}
 async function screenshot(page,name){await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:resolve('docs',name),fullPage:true});}
-async function context(options={}){const c=await browser.newContext(options);contexts.push(c);const page=await c.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));return {c,page,errors};}
+async function context(options={}){const c=await browser.newContext(options);contexts.push(c);const page=await c.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));page.on('request',request=>{if(origin.startsWith('https://')&&/^https?:\/\/(localhost|127\.0\.0\.1)(:|\/)/.test(request.url()))errors.push('Production request used localhost: '+request.url());});return {c,page,errors};}
 function record(name,details={}){evidence.push({name,result:'passed',...details});console.log('PASS: '+name);}
 try{
  for(const mobile of [false,true]){
