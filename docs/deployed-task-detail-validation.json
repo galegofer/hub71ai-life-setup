@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-02T10:48:45.970Z",
+  "origin": "https://frontend-production-20da.up.railway.app",
+  "checks": [
+    "All eleven mobile drawers separate plan state and connection, show compact unknown estimates with keyboard-accessible basis, and retain sources without overflow",
+    "LIVE mode and source-backed OFFICIAL rendering work using clearly isolated fixtures; missing duration remains unknown",
+    "Missing service data, missing estimates and unsupported official attribution safely display unknown values"
+  ]
+}
