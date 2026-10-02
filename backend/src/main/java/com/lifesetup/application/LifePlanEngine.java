@@ -22,14 +22,14 @@ public final class LifePlanEngine {
   return switch(t.id()) { case "driving" -> p.wantsToDrive(); case "family" -> p.movingWithFamily();
    case "school" -> p.movingWithChildren(); case "pet" -> p.bringingPet(); default -> true; };
  }
- public LifePlan calculate(ProfileSession session) {
-  var p=session.profile(); Set<String> done=new HashSet<>(session.completedTasks());
+ private List<LifeTask> tasks(ProfileSession session,Set<String> hypothetical) {
+  var p=session.profile(); Set<String> done=new HashSet<>(session.completedTasks());done.addAll(hypothetical);
   if(p.residenceStatus()==UserProfile.ResidenceStatus.COMPLETE) done.add("residence");
   if(p.hasEmiratesId()) done.add("emirates-id");
   if(p.hasHousing()) done.add("housing");
   // Receipt of the ID confirms the related residence milestone in this prototype.
   if(done.contains("emirates-id")) done.add("residence");
-  var tasks=catalogue.stream().filter(t->relevant(t,p)).map(t->{
+  return catalogue.stream().filter(t->relevant(t,p)).map(t->{
    var waiting=t.dependencies().stream().filter(d->!done.contains(d)).toList();
    boolean collectingId=t.id().equals("emirates-id") && p.residenceStatus()==UserProfile.ResidenceStatus.IN_PROGRESS;
    if(collectingId)waiting=List.of();
@@ -42,15 +42,26 @@ public final class LifePlanEngine {
 
    return new LifeTask(t,status,waiting);
   }).toList();
+ }
+ private List<String> unlocks(ProfileSession session,List<LifeTask> before,String candidate) {
+  var blocked=before.stream().filter(t->t.status()==BLOCKED&&!session.deferredTasks().contains(t.definition().id())).map(t->t.definition().id()).collect(java.util.stream.Collectors.toSet());
+  return tasks(session,Set.of(candidate)).stream().filter(t->blocked.contains(t.definition().id())&&(t.status()==READY||t.status()==IN_PROGRESS)).map(t->t.definition().id()).sorted().toList();
+ }
+ public LifePlan calculate(ProfileSession session) {
+  var tasks=tasks(session,Set.of());
   long completed=tasks.stream().filter(t->t.status()==DONE).count();
   long ready=tasks.stream().filter(t->t.status()==READY || t.status()==IN_PROGRESS).count();
-  var next=tasks.stream().filter(t->t.status()==READY || t.status()==IN_PROGRESS).findFirst();
+  var values=new HashMap<String,List<String>>();
+  tasks.stream().filter(t->t.status()==READY||t.status()==IN_PROGRESS).forEach(t->values.put(t.definition().id(),unlocks(session,tasks,t.definition().id())));
+  var next=tasks.stream().filter(t->t.status()==READY || t.status()==IN_PROGRESS).sorted(
+   Comparator.<LifeTask>comparingInt(t->values.get(t.definition().id()).size()).reversed()
+    .thenComparing(Comparator.comparingInt((LifeTask t)->t.definition().priority()).reversed()).thenComparing(t->t.definition().id())).findFirst();
   String nextAction=next.map(t->t.definition().title()).orElseGet(()->{
    if(completed==tasks.size()) return "You’re all set for now.";
    return tasks.stream().anyMatch(t->t.status()==LATER)
     ? "Your steps are waiting or saved for later. Resume a step when you’re ready."
     : "Your steps are waiting. Open Coming next to see what you need first.";
   });
-  return new LifePlan(tasks,nextAction,next.map(t->t.definition().id()).orElse(null),tasks.size()-completed,ready,completed);
+  return new LifePlan(tasks,nextAction,next.map(t->t.definition().id()).orElse(null),next.map(t->values.get(t.definition().id())).orElse(List.of()),tasks.size()-completed,ready,completed);
  }
 }

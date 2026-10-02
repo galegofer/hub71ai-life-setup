@@ -6,10 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class LifePlanEngineTest {
  @Test void recommendationIdentifiesAnActionableTaskAndChangesWhenDeferred() {
   var service=new ProfileService();var initial=service.create(UserProfile.demo());
-  assertEquals("residence",initial.plan().nextBestTaskId());
-  var updated=service.action(initial.profileId(),"residence","defer");
-  assertEquals("emirates-id",updated.plan().nextBestTaskId());
-  assertEquals("Get your Emirates ID",updated.plan().nextBestAction());
+  assertEquals("emirates-id",initial.plan().nextBestTaskId());
+  assertEquals(List.of("bank","driving"),initial.plan().nextBestUnlockTaskIds());
+  var updated=service.action(initial.profileId(),"emirates-id","defer");
+  assertEquals("housing",updated.plan().nextBestTaskId());
+  assertEquals("Find a home",updated.plan().nextBestAction());
  }
  @Test void deferredAndBlockedStepsAreNotMistakenForACompletedPlan() {
   var a=new TaskDefinition("a","A","",List.of(),List.of(),null,"","");

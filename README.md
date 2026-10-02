@@ -8,6 +8,24 @@ Submission repository: [galegofer/hub71ai-life-setup](https://github.com/galegof
 
 Java 25 / Spring Boot 4 / Maven backend; Astro 5 / TypeScript / React islands / Tailwind 4 frontend.
 
+Live demo: [Life Setup](https://frontend-production-20da.up.railway.app/).
+
+## Problem
+
+Newcomers can find individual services, but understanding which ones apply, what order to follow and what each step unlocks is difficult.
+
+## Approach
+
+Life Setup combines OpenAI for understanding the newcomer's situation, a deterministic dependency engine, the Abu Dhabi Newcomer Setup Graph, official UAE and Abu Dhabi sources, and plain-language guidance.
+
+## Why not just a chatbot?
+
+Government rules and dependencies should not be invented by an LLM. OpenAI helps understand the person and interpret questions. `LifePlanEngine` decides applicability, state and dependencies. TAMM helps people use government services; Life Setup explains which steps matter, when to check them and what they unlock.
+
+## Prototype limits
+
+Government connectors are mocked. No live government status is checked and no applications are submitted. Sessions are in memory and disappear on restart. Specific eligibility must be confirmed through official services.
+
 ## Put the project on Windows
 
 Extract the ZIP directly to `C:\Dev\workspace\life-setup-agent`. From a terminal in that folder, run:
@@ -58,16 +76,15 @@ Run `npm.cmd ci` only for the first install or after dependency changes. Keep bo
 
 If a server is already running on a conflicting port, stop that process from its own terminal only after identifying it. The launcher will not kill it or choose another port. In-memory progress resets whenever the backend restarts.
 
-## Demo in 90 seconds
+## Demo in three minutes
 
-1. Click **Try the demo** on the welcome page.
-2. Meet the Spanish professional moving with a spouse, child and pet.
-3. Open **Check your driving licence options**; it is waiting for Emirates ID.
-4. Open **Get your Emirates ID** and click **Emirates ID received**.
-5. Bank and driving tasks become ready. The announcement names both steps.
-6. Open **Ask Life Setup**, select the suggested question and click **Ask**.
-7. Open the official driving service link.
-8. Use **Reset demo profile** to repeat.
+1. Open welcome. Choose **Describe your move** and use the explicit example story, or **Try the demo** for the reliable baseline.
+2. Show **Here's what I understood**, edit or confirm the profile, and create the plan. Unstated nationality and licence country remain unknown; moving from Spain does not establish either.
+3. Highlight **Do this next** and its immediate unlocks. Open **Check your driving licence options**; it is waiting for Emirates ID.
+4. Open **Get your Emirates ID** and choose **Emirates ID received**.
+5. Show **Good news. Two steps are now ready.** Exactly bank and driving are highlighted.
+6. Open **Ask Life Setup** and ask **Can I exchange my driving licence now?** Show the updated qualification wording and official TAMM source.
+7. Return to the plan: **One simple plan for starting your life in Abu Dhabi.** Use **Reset demo profile** to repeat.
 
 Onboarding, profile editing, task completion, undo, deferral and resuming are supported. Undoing a dependency also clears recorded completion for dependent tasks. Completed facts from onboarding are changed through **Edit your answers**.
 
@@ -75,11 +92,17 @@ Onboarding, profile editing, task completion, undo, deferral and resuming are su
 
 Answers are generated from the current plan and curated task content. No API key is needed for the demo. An optional OpenAI Responses API client interprets a question into a task ID and intent using strict structured output; it does not generate government facts or change progress.
 
+Optional natural-language onboarding uses strict Structured Outputs to produce an editable draft. It creates no session or tasks until the user confirms. Both AI entry points use `store:false`, a seven-second backend request deadline and a shared limit of two concurrent OpenAI calls. Errors or absent credentials use deterministic fallback; the UI labels which mode produced the draft. Missing facts, including boolean answers, remain visibly unknown. Confirm unanswered Yes/No questions before creating the plan; country answers may remain null.
+
 To enable interpretation, set `OPENAI_API_KEY` and `OPENAI_MODEL` in the backend terminal before starting Spring. Use a model available to your account that supports Responses structured outputs. `.env.example` is documentation; the app does not automatically load `.env` files. No key is sent to the browser. Questions are sent to OpenAI only when both environment variables are set; `store:false` is supplied. Errors fall back to deterministic interpretation.
 
 ## API
 
 - `GET /api/health`
+- `GET /api/countries` (shared canonical country dataset)
+- `GET /api/demo-profile` (demo answers without a session)
+- `POST /api/profile/extract` with `{ "description": "..." }` (maximum 1200 characters)
+- `GET /api/catalogue` (the curated prototype dataset)
 - `POST /api/demo`
 - `POST /api/profile` with a `UserProfile` JSON object
 - `PUT /api/profile/{id}`
@@ -90,7 +113,19 @@ To enable interpretation, set `OPENAI_API_KEY` and `OPENAI_MODEL` in the backend
 - `GET /api/tasks/{taskId}/service` (explicit prototype connector)
 - `POST /api/assistant` with `{ "profileId": "...", "question": "...", "taskId": null }`
 
-Mutation responses contain the complete recalculated plan and `newlyReadyTaskIds`. The plan contains `nextBestAction` and nullable `nextBestTaskId`, selected by `LifePlanEngine`. No task is recommended when nothing is ready; saved or waiting steps are not called complete. Frontend logic never calculates dependencies.
+Mutation responses contain the complete recalculated plan and `newlyReadyTaskIds`. The plan contains `nextBestAction`, nullable `nextBestTaskId` and `nextBestUnlockTaskIds`, selected by `LifePlanEngine`. Recommendations rank immediate unlock count first, then explicit priority, then stable ID. Priority ties follow residence, ID, housing, Tawtheeq, utilities, insurance, bank, driving, family, school and pet. Catalogue order does not decide the recommendation. No task is recommended when nothing is actionable; saved or waiting steps are not called complete. Frontend logic never calculates dependencies.
+
+## Shared country data
+
+`backend/src/main/resources/countries.json` is the single canonical dataset for nationality, moving origin and licence country. It contains 249 assigned ISO alpha-2 codes with English names and explicit aliases, sourced from [i18n-iso-countries](https://github.com/michaelwittig/node-i18n-iso-countries) at commit `55c3a72603faf0185661e80841074e1c2fcf8db5`. Its MIT licence is retained in `docs/country-data-LICENSE.txt`.
+
+Profiles store codes only, or null for unknown; `NONE` is allowed only for explicitly no foreign licence. Country names are resolved through `/api/countries`, fetched once per page and shared by the controls. Existing Spanish/Spain answers normalize to ES. Unrecognized legacy values require review. The three answers remain independent and never establish licence eligibility.
+
+## Abu Dhabi Newcomer Setup Graph
+
+The catalogue is a structured dataset curated from official UAE and Abu Dhabi sources, with category, applicability, dependencies, priority, completion labels, source authority/URL, discovery date, verified scope and prototype notes. `/api/catalogue` exposes it with state-rule descriptions; `/api/plan/{id}` provides current blockers and states.
+
+This is a prototype dataset, not an official government dataset. It keeps planning deterministic, prevents the model from inventing dependencies, supports source traceability and separates sourced facts from AI interpretation. Dependencies and applicability remain explicitly labelled prototype assumptions.
 
 Requests time out after ten seconds. Connection failures preserve the current plan, answers and session reference, with a manual retry. Expired profile sessions clear the stale reference and offer a new plan or demo. Chat answers clear after plan changes. The next-step card and demo reset are available on mobile too.
 
@@ -131,12 +166,13 @@ npm.cmd run build
 
 If Maven is already on PATH, use `mvn.cmd` instead of the full path. Restart the identified demo backend after refreshing its JAR.
 
-Fifteen backend tests cover conditional tasks, completed facts, exact unlocking, premature completion, idempotency, undo propagation, deferral, malformed profiles, dependency graphs, recommendations and assistant answers. From the project root, check the running API and request/launcher failure handling:
+Backend tests cover conditional tasks, exact unlocking, undo, country normalization and independence, extraction fallback and recommendation ranking. From the project root, check the running API and request/launcher failure handling:
 
 ```powershell
 python scripts\smoke-test.py
 python scripts\smoke-test.py --base-url http://127.0.0.1:4321
 node scripts\reliability-test.mjs
+node scripts\country-intake-test.mjs
 ```
 
 `scripts/browser-smoke.mjs` rehearses desktop/mobile flows and recovery in isolated Edge sessions. It needs Playwright installed in the testing environment; set `PLAYWRIGHT_MODULE` to its module path if it is not on the project's module search path. It writes screenshots and JSON evidence under `docs`. `scripts/launcher-test.mjs` exercises fresh startup, port conflicts and failures; run it only after stopping the two identified demo processes. It leaves the demo running and writes temporary fixtures to ignored `.validation-launcher-*` folders.
@@ -157,6 +193,8 @@ Connect two services to the submission repository's `main` branch. Backend root:
 - Frontend variables: `RAILPACK_NODE_VERSION=24` and build-time `PUBLIC_API_URL` set to the backend HTTPS origin without `/api`. The service builds Astro's static output and serves `dist` with `npm run start` on Railway's `PORT`.
 - Generate public domains for both services, then set the API URL and CORS origin and deploy. Subsequent pushes to `main` deploy the affected services.
 - Optional backend-only variables: `OPENAI_API_KEY` and `OPENAI_MODEL`. Never put the key in frontend variables or Git.
+
+GitHub autodeploy requires the Railway GitHub App to have repository access and a project member to have connected GitHub. If that account setup is pending, push first, then use `railway redeploy --service backend --from-source --yes` and the equivalent command for `frontend`. Verify deployment metadata matches `git rev-parse HEAD`. Do not redeploy an older deployment by accident.
 
 When `PUBLIC_API_URL` is unset, local requests continue through Astro's development `/api` proxy. The production static server has no API proxy. Browser validation can target the deployed frontend with `DEMO_BASE_URL`; HTTP smoke checks accept `--base-url` for the deployed backend.
 

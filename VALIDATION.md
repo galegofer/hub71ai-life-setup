@@ -1,5 +1,21 @@
 # Validation
 
+## Hackathon delivery — 2 October 2026
+
+- Public repository: https://github.com/galegofer/hub71ai-life-setup (`main`).
+- Public frontend: https://frontend-production-20da.up.railway.app/ . Backend: https://backend-production-a5bdb.up.railway.app/api/health . Both are Railway services with separate `/frontend` and `/backend` roots and one replica each.
+- Baseline deployment passed real backend HTTP smoke checks, desktop/mobile complete-and-unlock rehearsals and exact-origin CORS checks. The unrelated origin received HTTP 403. GitHub Actions run 36986882486 passed builds and the real HTTP smoke test from an external Ubuntu runner.
+- Windows source validation after enhancements: 29 Maven tests passed; `mvn test package` succeeded. Frontend checks/build succeeded with zero errors, warnings or hints and four static routes.
+- Bundled and packaged JAR SHA-256 match: `B00958728AB214C642422483E96627450D730127482F660463103C866D092F97`.
+- Direct and Astro-proxy HTTP smoke tests pass with the new recommendation: Emirates ID, immediately unlocking exactly bank/driving. Premature completion, updated assistant guidance and undo propagation remain covered.
+- Five request/launcher reliability groups pass, including production API addressing, nullable draft validation and preventing a missing country/extraction endpoint from being mistaken for an expired profile.
+- All five local Edge browser groups pass: two desktop/mobile rehearsals with confirmation/reset, conditional onboarding and edits, defer/resume/undo, outage preservation/retry, expired-session recovery, keyboard focus and reduced motion. Desktop and 390px screenshots were visually inspected; no horizontal overflow was found.
+- Four country/intake browser groups pass: accent/alias search, keyboard selection, Escape, clear/null, licence-only NONE, independent persisted codes, incomplete-story confirmation, malformed extraction preservation and country-list retry. See `docs/country-intake-validation.json`.
+- OpenAI implementation uses strict Structured Outputs, backend-only credentials, `store:false`, a seven-second request deadline and at most two concurrent calls. Fake-client tests cover refusal, malformed output, timeout and fallback. The Railway backend key was still absent at the latest check; real OpenAI extraction remains pending secure key configuration.
+- GitHub autodeploy account permissions are pending confirmation. Source deployments can be triggered with `railway redeploy --from-source --yes`; deployment metadata must match the pushed commit. Final deployment evidence will be appended after the enhanced build is verified.
+- The three npm audit findings remain unresolved. GitHub additionally reports 13 dependency alerts across the repository (1 critical, 4 high, 5 moderate, 3 low); no major framework upgrades were made in this delivery pass.
+- Astro dev dependency caching can become stale after a source build; restarting only the identified frontend process restores hydration. Tests wait for island hydration and loaded edit answers rather than relying on local-response timing.
+
 ## Windows verification — 2 October 2026
 
 Verified in `C:\Dev\workspace\life-setup-agent` with Java 25.0.4.1, Maven 3.9.16, Node 24.21.0, npm 11.19.0, Spring Boot 4.0.0, Astro 5.18.2 and installed Microsoft Edge.

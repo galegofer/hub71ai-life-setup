@@ -25,7 +25,14 @@ public final class TaskCatalogue {
    new TaskDefinition("school","Explore school or nursery options","Find suitable places and ask about availability and enrolment.",List.of(),List.of("Ask each school or nursery about places and documents."),TAMM,"Explore official information","You can research options now. This app does not determine enrolment rules."),
    new TaskDefinition("pet","Plan your pet’s move","Check the official rules before arranging your pet’s travel.",List.of(),List.of("Find the relevant pet import service and confirm its current rules."),TAMM,"Find official information","Pet import requirements have not been reviewed for this prototype. This link opens the general government portal."),
    new TaskDefinition("insurance","Check your health insurance","Ask your employer about your cover and your family’s cover.",List.of(),List.of("Ask when your cover starts and who is covered."),TAMM,"Find official information","This app does not confirm your insurance obligations or coverage.")
-  );
+  ).stream().map(TaskCatalogue::metadata).toList();
+ }
+ private static TaskDefinition metadata(TaskDefinition t) {
+  var order=List.of("residence","emirates-id","housing","tawtheeq","utilities","insurance","bank","driving","family","school","pet");
+  String category=switch(t.id()){case "residence","emirates-id"->"IDENTITY";case "housing","tawtheeq","utilities"->"HOME";case "bank"->"MONEY";case "driving"->"TRANSPORT";case "family","school"->"FAMILY";case "pet"->"PET";case "insurance"->"HEALTH";default->"GENERAL";};
+  String applies=switch(t.id()){case "family"->"MOVING_WITH_FAMILY";case "school"->"MOVING_WITH_CHILDREN";case "driving"->"WANTS_TO_DRIVE";case "pet"->"BRINGING_PET";default->"ALWAYS";};
+  String label=switch(t.id()){case "residence"->"Residence completed";case "emirates-id"->"Emirates ID received";case "housing"->"I found a home";case "insurance"->"Coverage confirmed";case "driving"->"I checked my options";default->"Mark this step done";};
+  return new TaskDefinition(t.id(),t.title(),t.summary(),t.dependencies(),t.requirements(),t.officialSource(),t.nextAction(),t.note(),category,applies,order.size()-order.indexOf(t.id()),label);
  }
  public static TaskDefinition find(String id) {
   return all().stream().filter(t->t.id().equals(id)).findFirst().orElseThrow(()->new IllegalArgumentException("That task does not exist."));

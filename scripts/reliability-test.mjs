@@ -13,6 +13,8 @@ test('API distinguishes expiry, server outages and malformed replies',async()=>{
  try{
   globalThis.fetch=async()=>new Response(JSON.stringify({message:'Session expired.'}),{status:404});
   await assert.rejects(api('/plan/missing'),error=>error instanceof ApiError&&expiredSession(error)&&!retryable(error));
+  await assert.rejects(api('/countries'),error=>error instanceof ApiError&&!expiredSession(error));
+  await assert.rejects(api('/profile/extract',{description:'I moved from Spain'}),error=>error instanceof ApiError&&!expiredSession(error));
   globalThis.fetch=async()=>new Response('Proxy failed',{status:503});
   await assert.rejects(api('/plan/test'),error=>error.status===503&&retryable(error)&&!expiredSession(error));
   for(const reply of ['not JSON','null','{}']){
@@ -22,6 +24,21 @@ test('API distinguishes expiry, server outages and malformed replies',async()=>{
   globalThis.fetch=async()=>{throw new TypeError('Failed to fetch');};
   await assert.rejects(api('/plan/test'),error=>error.kind==='network'&&error.status===null&&retryable(error));
  }finally{globalThis.fetch=fetch;}
+});
+test('API accepts nullable extraction drafts without expecting a plan snapshot',async()=>{
+ const fetch=globalThis.fetch;
+ try {
+  const draft={nationality:null,movingFrom:'ES',alreadyInUae:null,movingWithFamily:null,movingWithChildren:null,residenceStatus:null,hasEmiratesId:null,hasHousing:null,wantsToDrive:null,licenceCountry:null,bringingPet:null};
+  globalThis.fetch=async()=>new Response(JSON.stringify({draft,mode:'FALLBACK'}));
+  assert.deepEqual((await api('/profile/extract',{description:'I moved from Spain'})).draft,draft);
+  globalThis.fetch=async()=>new Response(JSON.stringify({draft:{},mode:'OPENAI'}));
+  await assert.rejects(api('/profile/extract',{description:'test'}),error=>error.kind==='malformed');
+ } finally {globalThis.fetch=fetch;}
+});
+test('Production API origin is configurable and normalized',async()=>{
+ const compiled=js.replace('import.meta.env?.PUBLIC_API_URL',JSON.stringify('https://backend.example/'));
+ const production=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
+ assert.equal(production.apiUrl('/health'),'https://backend.example/api/health');
 });
 test('API bounds requests and classifies timeouts',async()=>{
  const fetch=globalThis.fetch;const timer=globalThis.setTimeout;

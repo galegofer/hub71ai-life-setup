@@ -26,6 +26,7 @@ jobs:
         env:
           PUBLIC_API_URL: https://backend-production-a5bdb.up.railway.app
       - name: Verify public deployment from an external network
+        if: github.event_name == 'workflow_dispatch'
         run: |
           curl --fail --retry 3 --max-time 20 https://frontend-production-20da.up.railway.app/ -o /tmp/life-setup.html
           grep -q 'Life Setup' /tmp/life-setup.html

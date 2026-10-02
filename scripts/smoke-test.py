@@ -10,7 +10,8 @@ assert call('/health')=={'status':'ok','mode':'prototype'}
 s=call('/demo',{});id=s['profileId']
 status=lambda plan,task:next(t['status'] for t in plan['plan']['tasks'] if t['definition']['id']==task)
 assert status(s,'driving')=='BLOCKED'
-assert s['plan']['nextBestTaskId']=='residence'
+assert s['plan']['nextBestTaskId']=='emirates-id'
+assert set(s['plan']['nextBestUnlockTaskIds'])=={'bank','driving'}
 before=call('/assistant',{'profileId':id,'question':'Can I exchange my driving licence now?'})
 assert before['answer'].startswith('Not yet.')
 try:call('/plan/'+id+'/tasks/driving/complete',{});raise AssertionError('Blocked completion accepted')
