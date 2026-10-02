@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-02T09:56:21.287Z",
+  "origin": "https://frontend-production-20da.up.railway.app",
+  "browser": "Microsoft Edge",
+  "checks": [
+    {
+      "name": "Desktop demo, exact unlock, assistant and keyboard focus",
+      "result": "passed"
+    },
+    {
+      "name": "390px demo, reset, reduced motion and no overflow",
+      "result": "passed"
+    },
+    {
+      "name": "Conditional onboarding, saved profile edits, defer/resume and undo",
+      "result": "passed"
+    },
+    {
+      "name": "Unavailable backend: action, chat, edit submission and load retries preserve work",
+      "result": "passed"
+    },
+    {
+      "name": "Expired sessions recover during load, editing, task actions and chat",
+      "result": "passed"
+    }
+  ]
+}

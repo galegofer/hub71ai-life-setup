@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-02T09:58:48.866175+00:00",
+  "origin": "https://backend-production-a5bdb.up.railway.app/api",
+  "checks": [
+    "Explicit demo country codes ES, ES, ES",
+    "Origin-only and malicious descriptions do not infer nationality/licence or mutate the existing plan",
+    "Unsupported country rejected with HTTP 400",
+    "Legacy Spanish/Spain normalize to ES and licence NONE remains distinct",
+    "Curated catalogue endpoint exposes 11 prototype tasks"
+  ]
+}

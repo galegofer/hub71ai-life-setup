@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-02T09:54:15.404Z",
-  "origin": "http://127.0.0.1:4321",
+  "date": "2026-10-02T09:55:46.890Z",
+  "origin": "https://frontend-production-20da.up.railway.app",
   "checks": [
     "390px combobox search, accents, keyboard, Escape, clear, NONE and independent persisted codes",
     "Incomplete story preserves unknowns and requires editable confirmation",
