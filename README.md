@@ -129,6 +129,12 @@ This is a prototype dataset, not an official government dataset. It keeps planni
 
 Requests time out after ten seconds. Connection failures preserve the current plan, answers and session reference, with a manual retry. Expired profile sessions clear the stale reference and offer a new plan or demo. Chat answers clear after plan changes. The next-step card and demo reset are available on mobile too.
 
+## Task status and estimates
+
+Every task drawer shows current status, the next action, duration, cost and where to verify the information. `serviceEstimate` is included in plan tasks and the existing service endpoint. Residence and Emirates ID use clearly labelled prototype progress from recorded answers; other services are link-only. No live government status is retrieved. A future LIVE connector can use the same contract, but its status must include a real check time.
+
+Every estimate has a confidence and a plain-language basis. Existing project sources do not establish verified fees or timings, so all current estimates remain UNKNOWN; application/provider variability is shown without a guessed amount or duration. OFFICIAL estimates require a supporting source URL. Official link discovery dates remain separate from status check times. Housing and bank use provider guidance because no official service link is recorded. The assistant, dependencies and completion rules are unchanged.
+
 ## Rules and factual limits
 
 The curated dependency graph is a prototype planning model, not a verified statement of every legal or provider requirement. It models employer-sponsored professional relocation only. In the demo, ID collection can be in progress while residence is underway. Recording ID receipt also confirms the related residence milestone. Driving readiness means the next step can be checked, not that exchange eligibility is approved. Bank providers may support other routes.

@@ -1,5 +1,6 @@
 package com.lifesetup.application;
 import com.lifesetup.domain.*;
+import com.lifesetup.integration.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,10 @@ import org.springframework.stereotype.Service;
 public class ProfileService {
  private final Map<String,ProfileSession> sessions=new ConcurrentHashMap<>();
  private final LifePlanEngine engine=new LifePlanEngine();
+ private final GovernmentServiceConnector services;
+ @org.springframework.beans.factory.annotation.Autowired
+ public ProfileService() { this(new MockGovernmentServiceConnector()); }
+ public ProfileService(GovernmentServiceConnector services) { this.services=Objects.requireNonNull(services); }
  public record Snapshot(String profileId,UserProfile profile,LifePlan plan,List<String> newlyReadyTaskIds) {
   public Snapshot { newlyReadyTaskIds=List.copyOf(newlyReadyTaskIds); }
  }
@@ -19,7 +24,9 @@ public class ProfileService {
   var s=sessions.get(id); if(s==null) throw new NoSuchElementException("Your prototype session has expired. Start a new plan.");return s;
  }
  private Snapshot snapshot(ProfileSession s,List<String> unlocked) {
-  var plan=engine.calculate(s);var p=s.profile();
+  var calculated=engine.calculate(s);var p=s.profile();
+  var enriched=calculated.tasks().stream().map(t->new LifeTask(t.definition(),t.status(),t.waitingFor(),services.information(t.definition(),t.status()).serviceEstimate())).toList();
+  var plan=new LifePlan(enriched,calculated.nextBestAction(),calculated.nextBestTaskId(),calculated.nextBestUnlockTaskIds(),calculated.remaining(),calculated.ready(),calculated.completed());
   var done=plan.tasks().stream().filter(t->t.status()==TaskStatus.DONE).map(t->t.definition().id()).toList();
   var effective=new UserProfile(p.nationality(),p.movingFrom(),p.alreadyInUae(),p.movingWithFamily(),p.movingWithChildren(),done.contains("residence")?UserProfile.ResidenceStatus.COMPLETE:p.residenceStatus(),done.contains("emirates-id"),done.contains("housing"),p.wantsToDrive(),p.licenceCountry(),p.bringingPet());
   return new Snapshot(s.id(),effective,plan,unlocked);

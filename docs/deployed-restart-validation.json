@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-02T10:01:54.026Z",
+  "origin": "https://frontend-production-20da.up.railway.app",
+  "checks": [
+    "A real pre-deployment in-memory session returned HTTP 404 after backend rollout",
+    "The public browser cleared its stale reference and displayed recovery choices without intercepted responses"
+  ]
+}

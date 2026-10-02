@@ -1,6 +1,7 @@
 package com.lifesetup.integration;
-import com.lifesetup.domain.TaskDefinition;
+import com.lifesetup.domain.*;
 public interface GovernmentServiceConnector {
- record ServiceInfo(String mode,String status,String officialUrl) {}
- ServiceInfo information(TaskDefinition task);
+ record ServiceInfo(String mode,String status,String officialUrl,ServiceEstimate serviceEstimate) {}
+ default ServiceInfo information(TaskDefinition task) { return information(task,null); }
+ ServiceInfo information(TaskDefinition task,TaskStatus planStatus);
 }

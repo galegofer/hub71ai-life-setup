@@ -2,7 +2,11 @@ export type Status='READY'|'IN_PROGRESS'|'BLOCKED'|'DONE'|'LATER';
 export interface Profile { nationality:string|null;movingFrom:string|null;alreadyInUae:boolean;movingWithFamily:boolean;movingWithChildren:boolean;residenceStatus:'NOT_STARTED'|'IN_PROGRESS'|'COMPLETE';hasEmiratesId:boolean;hasHousing:boolean;wantsToDrive:boolean;licenceCountry:string|null;bringingPet:boolean }
 export interface Source { authority:string;title:string;url:string;lastChecked:string;scope:string }
 export interface Definition { id:string;title:string;summary:string;dependencies:string[];requirements:string[];officialSource:Source|null;nextAction:string;note:string;category:string;applicability:string;priority:number;completionLabel:string }
-export interface Task { definition:Definition;status:Status;waitingFor:string[] }
+export type ConnectionMode='LIVE'|'MOCK'|'LINK_ONLY';
+export type EstimateConfidence='OFFICIAL'|'PROVIDER_SPECIFIC'|'TYPICAL'|'PROTOTYPE'|'UNKNOWN';
+export interface Estimate { displayValue:string;confidence:EstimateConfidence;basis:string;sourceUrl:string|null }
+export interface ServiceEstimate { status:{connectionMode:ConnectionMode;state:'UNKNOWN'|'NOT_STARTED'|'IN_PROGRESS'|'COMPLETED';plainLanguageStatus:string;checkedAt:string|null};duration:Estimate|null;cost:Estimate|null;officialActionUrl:string|null }
+export interface Task { definition:Definition;status:Status;waitingFor:string[];serviceEstimate?:ServiceEstimate|null }
 export interface Snapshot { profileId:string;profile:Profile;plan:{tasks:Task[];remaining:number;ready:number;completed:number;nextBestAction:string;nextBestTaskId:string|null;nextBestUnlockTaskIds:string[]};newlyReadyTaskIds:string[] }
 export class ApiError extends Error {
  constructor(message:string,public status:number|null,public kind:'http'|'network'|'timeout'|'malformed',public sessionExpired=false) { super(message);this.name='ApiError'; }
