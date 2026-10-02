@@ -25,8 +25,8 @@ public class ProfileService {
  }
  private Snapshot snapshot(ProfileSession s,List<String> unlocked) {
   var calculated=engine.calculate(s);var p=s.profile();
-  var enriched=calculated.tasks().stream().map(t->new LifeTask(t.definition(),t.status(),t.waitingFor(),services.information(t.definition(),t.status()).serviceEstimate())).toList();
-  var plan=new LifePlan(enriched,calculated.nextBestAction(),calculated.nextBestTaskId(),calculated.nextBestUnlockTaskIds(),calculated.remaining(),calculated.ready(),calculated.completed());
+  var enriched=calculated.tasks().stream().map(t->new LifeTask(t.definition(),t.status(),t.waitingFor(),services.information(t.definition(),t.status()).serviceEstimate(),t.immediateUnlockTaskIds(),t.planStatusSummary(),t.nextAction(),t.afterCompletion())).toList();
+  var plan=new LifePlan(enriched,calculated.nextBestAction(),calculated.nextBestTaskId(),calculated.nextBestUnlockTaskIds(),calculated.remaining(),calculated.ready(),calculated.completed(),calculated.waiting(),calculated.later(),calculated.biggestBlockerTaskId(),calculated.situationSummary());
   var done=plan.tasks().stream().filter(t->t.status()==TaskStatus.DONE).map(t->t.definition().id()).toList();
   var effective=new UserProfile(p.nationality(),p.movingFrom(),p.alreadyInUae(),p.movingWithFamily(),p.movingWithChildren(),done.contains("residence")?UserProfile.ResidenceStatus.COMPLETE:p.residenceStatus(),done.contains("emirates-id"),done.contains("housing"),p.wantsToDrive(),p.licenceCountry(),p.bringingPet());
   return new Snapshot(s.id(),effective,plan,unlocked);

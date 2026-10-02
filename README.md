@@ -22,6 +22,10 @@ Life Setup combines OpenAI for understanding the newcomer's situation, a determi
 
 Government rules and dependencies should not be invented by an LLM. OpenAI helps understand the person and interpret questions. `LifePlanEngine` decides applicability, state and dependencies. TAMM helps people use government services; Life Setup explains which steps matter, when to check them and what they unlock.
 
+## Connected plan guidance
+
+Your situation, readiness counts, biggest blocker and immediate unlocks come from the deterministic plan engine. Each drawer explains its next action and downstream steps. Service connection remains separate from plan state: existing residence/ID prototype progress is labelled, other services remain link-only. Timing and cost stay explicitly unverified when registered sources do not support estimates. No numeric guesses are added.
+
 ## Prototype limits
 
 Government connectors are mocked. No live government status is checked and no applications are submitted. Sessions are in memory and disappear on restart. Specific eligibility must be confirmed through official services.

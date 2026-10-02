@@ -2,6 +2,14 @@
 
 ## Hackathon delivery — 2 October 2026
 
+### Reopened value-density pass — 15:20 Dubai
+
+- The user explicitly reopened the submission and overrode the earlier feature cutoff. Personal context, readiness counts, biggest blocker, immediate unlocks and downstream guidance now come from LifePlanEngine without changing task-state rules or recommendation ordering.
+- Drawers retain separate plan/connection labels, compact unknown estimates, attribution and actions. Existing mock progress is reused; services without existing mock data retain LINK_ONLY. No unsupported numeric estimates were introduced.
+- Frontend checks/build passed with zero errors, warnings or hints. Maven package passed and bundled/packaged JAR hashes match: `E59C400445113F7964C1701F1CDB4840B0C87BA0452B1A33012B26EF9A61FFB9`.
+- The user requested no further tests. Further browser/smoke/regression tests were skipped; earlier evidence below describes earlier commits, not verification of this pass. Deployment health and exact commit metadata will be checked after rollout.
+
+
 ### Source-aware refinement — 14:44 Dubai
 
 - The user explicitly reclassified `1e93acb7e154d50a7720ffd298c30fbc344be9e9` as a checkpoint and authorized this bounded replacement. Feature implementation and local validation completed before 14:45; only deployment and delivery validation remain afterward.

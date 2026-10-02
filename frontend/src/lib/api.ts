@@ -6,8 +6,8 @@ export type ConnectionMode='LIVE'|'MOCK'|'LINK_ONLY';
 export type EstimateConfidence='OFFICIAL'|'PROVIDER_SPECIFIC'|'TYPICAL'|'PROTOTYPE'|'UNKNOWN';
 export interface Estimate { displayValue:string;confidence:EstimateConfidence;basis:string;sourceUrl:string|null }
 export interface ServiceEstimate { status:{connectionMode:ConnectionMode;state:'UNKNOWN'|'NOT_STARTED'|'IN_PROGRESS'|'COMPLETED';plainLanguageStatus:string;checkedAt:string|null};duration:Estimate|null;cost:Estimate|null;officialActionUrl:string|null }
-export interface Task { definition:Definition;status:Status;waitingFor:string[];serviceEstimate?:ServiceEstimate|null }
-export interface Snapshot { profileId:string;profile:Profile;plan:{tasks:Task[];remaining:number;ready:number;completed:number;nextBestAction:string;nextBestTaskId:string|null;nextBestUnlockTaskIds:string[]};newlyReadyTaskIds:string[] }
+export interface Task { definition:Definition;status:Status;waitingFor:string[];serviceEstimate?:ServiceEstimate|null;immediateUnlockTaskIds?:string[];planStatusSummary?:string;nextAction?:string;afterCompletion?:string }
+export interface Snapshot { profileId:string;profile:Profile;plan:{tasks:Task[];remaining:number;ready:number;completed:number;nextBestAction:string;nextBestTaskId:string|null;nextBestUnlockTaskIds:string[];waiting?:number;later?:number;biggestBlockerTaskId?:string|null;situationSummary?:string[]};newlyReadyTaskIds:string[] }
 export class ApiError extends Error {
  constructor(message:string,public status:number|null,public kind:'http'|'network'|'timeout'|'malformed',public sessionExpired=false) { super(message);this.name='ApiError'; }
 }
