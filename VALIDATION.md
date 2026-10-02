@@ -7,7 +7,7 @@
 - The user explicitly reopened the submission and overrode the earlier feature cutoff. Personal context, readiness counts, biggest blocker, immediate unlocks and downstream guidance now come from LifePlanEngine without changing task-state rules or recommendation ordering.
 - Drawers retain separate plan/connection labels, compact unknown estimates, attribution and actions. Existing mock progress is reused; services without existing mock data retain LINK_ONLY. No unsupported numeric estimates were introduced.
 - Frontend checks/build passed with zero errors, warnings or hints. Maven package passed and bundled/packaged JAR hashes match: `E59C400445113F7964C1701F1CDB4840B0C87BA0452B1A33012B26EF9A61FFB9`.
-- The user requested no further tests. Further browser/smoke/regression tests were skipped; earlier evidence below describes earlier commits, not verification of this pass. Deployment health and exact commit metadata will be checked after rollout.
+- The user requested no further tests. Further browser/smoke/regression tests were skipped; earlier evidence below describes earlier commits, not verification of this pass. At 15:25 Dubai, both Railway services reported SUCCESS for `f2a11682efba17ed6b969758011832fc01991347`. Public backend health returned ok and the frontend returned HTTP 200. Local refreshed demo startup reported both ports ready. This documentation-only delivery commit will also be rolled out to both services.
 
 
 ### Source-aware refinement — 14:44 Dubai
