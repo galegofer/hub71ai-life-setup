@@ -21,6 +21,9 @@ try {
   const mode=['residence','emirates-id'].includes(task.definition.id)?'Prototype status':'Not connected yet';await drawer.getByText(mode,{exact:true}).waitFor();
   assert.equal(await drawer.getByText('Live status',{exact:true}).count(),0);assert.equal(await drawer.getByText('Official fee',{exact:true}).count(),0);
   assert.equal(await drawer.getByText('Not verified',{exact:true}).count(),2);
+  await drawer.getByText('Your plan',{exact:true}).waitFor();
+  const basis=drawer.locator('.estimate-bases');assert.equal(await basis.getAttribute('open'),null);
+  const summary=basis.locator('summary');await summary.focus();await summary.press('Enter');assert.notEqual(await basis.getAttribute('open'),null);assert.equal(await basis.locator('p').first().isVisible(),true);await summary.press('Space');assert.equal(await basis.getAttribute('open'),null);
   if(task.definition.officialSource)assert.equal(await drawer.locator('.source-box a').getAttribute('href'),task.definition.officialSource.url);
   else await drawer.getByText(/No official service link is recorded/).waitFor();
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
@@ -28,7 +31,7 @@ try {
   if(task.definition.id==='emirates-id') {await drawer.getByText('Your application is being processed.',{exact:true}).waitFor();await page.screenshot({path:'docs/'+prefix+'-id-detail-mobile.png'});}
   await page.keyboard.press('Escape');
  }
- checks.push('All eleven mobile drawers show mode, next action, unknown estimates, basis and existing source/provider guidance without overflow');
+ checks.push('All eleven mobile drawers separate plan state and connection, show compact unknown estimates with keyboard-accessible basis, and retain sources without overflow');
  const id=snapshot.plan.tasks.find(task=>task.definition.id==='emirates-id');
  async function fixture(service) {
   await page.unroute('**/api/plan/**');

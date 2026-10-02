@@ -2,6 +2,14 @@
 
 ## Hackathon delivery — 2 October 2026
 
+### Source-aware refinement — 14:44 Dubai
+
+- The user explicitly reclassified `1e93acb7e154d50a7720ffd298c30fbc344be9e9` as a checkpoint and authorized this bounded replacement. Feature implementation and local validation completed before 14:45; only deployment and delivery validation remain afterward.
+- Reviewed duration/cost metadata now takes precedence over UNKNOWN defaults. Entries must cite the task's registered official source and use OFFICIAL confidence. Registered source metadata was inspected; none supports fees or durations, so production entries remain null with no invented values.
+- Drawer plan state is labelled Your plan and remains separate from service mode. Unknown estimates use secondary styling, with full explanations in a keyboard-accessible Estimate basis disclosure. Missing data uses the same concise fallback.
+- Maven tests/package passed 36 tests. Frontend checks/build passed with zero errors, warnings or hints. All three local task-detail browser groups, five demo/recovery groups and direct/proxy HTTP smoke tests passed. The 390px screenshot was rendered and inspected; no overflow. Exact unlock, assistant and existing actions remain intact.
+- Bundled/packaged JAR SHA-256 matches: `0B96AFF91842D3F47B9CC2D7842DBD1E59A6D5544AE274A94F97FBF90F949D2A`. The refreshed local demo remains running. Public rollout evidence will be recorded after deployment.
+
 - Public repository: https://github.com/galegofer/hub71ai-life-setup (`main`).
 - Public frontend: https://frontend-production-20da.up.railway.app/ . Backend: https://backend-production-a5bdb.up.railway.app/api/health . Both are Railway services with separate `/frontend` and `/backend` roots and one replica each.
 - Baseline deployment passed real backend HTTP smoke checks, desktop/mobile complete-and-unlock rehearsals and exact-origin CORS checks. The unrelated origin received HTTP 403. GitHub Actions run 36986882486 passed builds and the real HTTP smoke test from an external Ubuntu runner.

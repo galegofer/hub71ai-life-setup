@@ -135,6 +135,8 @@ Every task drawer shows current status, the next action, duration, cost and wher
 
 Every estimate has a confidence and a plain-language basis. Existing project sources do not establish verified fees or timings, so all current estimates remain UNKNOWN; application/provider variability is shown without a guessed amount or duration. OFFICIAL estimates require a supporting source URL. Official link discovery dates remain separate from status check times. Housing and bank use provider guidance because no official service link is recorded. The assistant, dependencies and completion rules are unchanged.
 
+Tasks can register nullable `reviewedDuration` and `reviewedCost` metadata. The connector prefers these exact source-supported estimates before returning UNKNOWN; reviewed entries must use OFFICIAL confidence and cite that task's registered source. All current entries remain null after reviewing source metadata. In the drawer, Your plan stays separate from service connection. Unknown estimates are secondary and their full basis is available in one keyboard-accessible disclosure.
+
 ## Rules and factual limits
 
 The curated dependency graph is a prototype planning model, not a verified statement of every legal or provider requirement. It models employer-sponsored professional relocation only. In the demo, ID collection can be in progress while residence is underway. Recording ID receipt also confirms the related residence milestone. Driving readiness means the next step can be checked, not that exchange eligibility is approved. Bank providers may support other routes.

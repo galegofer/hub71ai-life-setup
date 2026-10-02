@@ -32,7 +32,8 @@ public final class TaskCatalogue {
   String category=switch(t.id()){case "residence","emirates-id"->"IDENTITY";case "housing","tawtheeq","utilities"->"HOME";case "bank"->"MONEY";case "driving"->"TRANSPORT";case "family","school"->"FAMILY";case "pet"->"PET";case "insurance"->"HEALTH";default->"GENERAL";};
   String applies=switch(t.id()){case "family"->"MOVING_WITH_FAMILY";case "school"->"MOVING_WITH_CHILDREN";case "driving"->"WANTS_TO_DRIVE";case "pet"->"BRINGING_PET";default->"ALWAYS";};
   String label=switch(t.id()){case "residence"->"Residence completed";case "emirates-id"->"Emirates ID received";case "housing"->"I found a home";case "insurance"->"Coverage confirmed";case "driving"->"I checked my options";default->"Mark this step done";};
-  return new TaskDefinition(t.id(),t.title(),t.summary(),t.dependencies(),t.requirements(),t.officialSource(),t.nextAction(),t.note(),category,applies,order.size()-order.indexOf(t.id()),label);
+  // Registered source scopes contain no supported fees or durations; reviewed entries remain null.
+  return new TaskDefinition(t.id(),t.title(),t.summary(),t.dependencies(),t.requirements(),t.officialSource(),t.nextAction(),t.note(),category,applies,order.size()-order.indexOf(t.id()),label,t.reviewedDuration(),t.reviewedCost());
  }
  public static TaskDefinition find(String id) {
   return all().stream().filter(t->t.id().equals(id)).findFirst().orElseThrow(()->new IllegalArgumentException("That task does not exist."));

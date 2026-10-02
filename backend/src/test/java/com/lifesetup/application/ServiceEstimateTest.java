@@ -9,6 +9,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import static com.lifesetup.domain.GovernmentServiceStatus.ConnectionMode.*;
 import static com.lifesetup.domain.GovernmentServiceStatus.ServiceState.*;
 class ServiceEstimateTest {
+ @Test void connectorUsesReviewedOfficialWordingAndConditionsExactly() {
+  var original=TaskCatalogue.find("emirates-id");
+  var duration=new Estimate("Exact duration wording, subject to the stated conditions",Estimate.Confidence.OFFICIAL,"Official rendering fixture only; no timing claim.",original.officialSource().url());
+  var cost=new Estimate("Exact fee wording, subject to the stated conditions",Estimate.Confidence.OFFICIAL,"Official rendering fixture only; no fee claim.",original.officialSource().url());
+  var reviewed=new TaskDefinition(original.id(),original.title(),original.summary(),original.dependencies(),original.requirements(),original.officialSource(),original.nextAction(),original.note(),original.category(),original.applicability(),original.priority(),original.completionLabel(),duration,cost);
+  var actual=new MockGovernmentServiceConnector().information(reviewed,TaskStatus.IN_PROGRESS).serviceEstimate();
+  assertEquals(duration,actual.duration());assertEquals(cost,actual.cost());assertEquals(MOCK,actual.status().connectionMode());
+  assertThrows(IllegalArgumentException.class,()->new TaskDefinition(original.id(),original.title(),original.summary(),original.dependencies(),original.requirements(),null,original.nextAction(),original.note(),original.category(),original.applicability(),original.priority(),original.completionLabel(),duration,cost));
+ }
+ @Test void currentRegisteredSourceMetadataDoesNotSupportEstimates() {
+  for(var task:TaskCatalogue.all()) {assertNull(task.reviewedDuration());assertNull(task.reviewedCost());var result=new MockGovernmentServiceConnector().information(task).serviceEstimate();assertEquals(Estimate.Confidence.UNKNOWN,result.duration().confidence());assertEquals(Estimate.Confidence.UNKNOWN,result.cost().confidence());}
+ }
  @Test void allTasksHaveTruthfulModeAndUnknownEstimates() {
   var snapshot=new ProfileService().create(UserProfile.demo());assertEquals(11,snapshot.plan().tasks().size());
   for(var task:snapshot.plan().tasks()) {

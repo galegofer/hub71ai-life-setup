@@ -15,8 +15,8 @@ public final class MockGovernmentServiceConnector implements GovernmentServiceCo
   if(simulated&&planStatus==null)text="No current application status is recorded in this prototype.";
   String url=task.officialSource()==null?null:task.officialSource().url();
   boolean provider=java.util.Set.of("housing","bank","school","insurance").contains(task.id());
-  var duration=Estimate.unknown("Not enough verified information yet.","The project sources do not establish a verified time estimate for this step. Confirm it with the service or provider.");
-  var cost=Estimate.unknown(provider?"Varies by provider.":"Depends on your application.","The project sources do not establish a verified cost for this step. Confirm your own application or provider’s charges.");
+  var duration=task.reviewedDuration()!=null?task.reviewedDuration():Estimate.unknown("Not enough verified information yet.","The project sources do not establish a verified time estimate for this step. Confirm it with the service or provider.");
+  var cost=task.reviewedCost()!=null?task.reviewedCost():Estimate.unknown(provider?"Varies by provider.":"Depends on your application.","The project sources do not establish a verified cost for this step. Confirm your own application or provider’s charges.");
   var estimate=new ServiceEstimate(new GovernmentServiceStatus(simulated?MOCK:LINK_ONLY,state,text,null),duration,cost,url);
   return new ServiceInfo("PROTOTYPE","No live status check is connected.",url,estimate);
  }
